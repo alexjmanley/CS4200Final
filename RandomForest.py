@@ -1,15 +1,23 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestRegressor
 
 # Importing and formatting data from data set
-df = pd.read_csv("data/iran_war_oil_prices_daily_2026.csv")
-df["date"] = pd.to_datetime(df["date"])
+data = pd.read_csv("data/iran_war_oil_prices_daily_2026.csv")
 
 # Assigning x and y values
-x= np.array(df['date'])
-y = np.array(df['us_gas_avg_gallon'])
+x = data[['brent_usd_barrel', 'wti_usd_barrel', 'dubai_usd_barrel', 'strait_hormuz_daily_ships',
+	'iran_production_mbpd', 'war_day', 'brent_vs_prewar_pct', 'gas_vs_prewar_pct', 
+	'gas_change_from_prewar_dollars']]
 
-# simple plot to see line
-plt.plot(x, y)
-plt.show()
+y = data['us_gas_avg_gallon']
+
+# assign model and fit
+model = RandomForestRegressor(n_estimators=100)
+model.fit(x, y)
+predictions = model.predict(x)
+
+print(model.feature_importances_)
+
+for index in range(len(predictions)):
+	print('Actual: ', y[index], 'Predicted: ', predictions[index])
