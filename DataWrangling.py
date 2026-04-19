@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler
 
 # grabbing data set and seeing shape 
 dataFile = pd .read_csv('./data/iran_war_oil_prices_daily_2026.csv')
@@ -20,6 +21,11 @@ print(dataFile.isnull().sum())
 dataFile['intdate'] = pd.to_datetime(dataFile['date']).astype('int64')
 
 df = pd.DataFrame(dataFile, columns=['intdate', 'us_gas_avg_gallon'])
+
+scaler = StandardScaler()
+df[['intdate', 'us_gas_avg_gallon']] = scaler.fit_transform(
+    df[['intdate', 'us_gas_avg_gallon']]
+)
 
 clustering = DBSCAN(eps=5, min_samples=3).fit(df)
 labels = clustering.labels_
